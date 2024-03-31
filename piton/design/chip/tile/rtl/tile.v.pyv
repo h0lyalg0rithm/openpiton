@@ -286,6 +286,7 @@ print(s)
 
     wire [`PCX_REQTYPE_WIDTH-1:0]       transducer_l15_rqtype;
     wire [`L15_AMO_OP_WIDTH-1:0]        transducer_l15_amo_op;
+    wire [`L15_CMO_OP_WIDTH-1:0]        transducer_l15_cmo_op;
 
     wire                                transducer_l15_nc;
     wire [`PCX_SIZE_FIELD_WIDTH-1:0]    transducer_l15_size;
@@ -1082,6 +1083,7 @@ print(str)
 
         .transducer_l15_rqtype              (transducer_l15_rqtype),
         .transducer_l15_amo_op              (transducer_l15_amo_op),
+        .transducer_l15_cmo_op              (transducer_l15_cmo_op),
         .transducer_l15_nc                  (transducer_l15_nc),
         .transducer_l15_size                (transducer_l15_size),
         // .pcxdecoder_l15_invalall         (transducer_l15_invalall),

@@ -59,6 +59,7 @@ module l15_pipeline(
     // pcx
     input wire [`PCX_REQTYPE_WIDTH-1:0] pcxdecoder_l15_rqtype,
     input wire [`L15_AMO_OP_WIDTH-1:0] pcxdecoder_l15_amo_op,
+    input wire [`L15_CMO_OP_WIDTH-1:0] pcxdecoder_l15_cmo_op,
     input wire pcxdecoder_l15_nc,
     input wire [`PCX_SIZE_FIELD_WIDTH-1:0] pcxdecoder_l15_size,
     // input wire pcxdecoder_l15_invalall,         // unused input from core
@@ -661,6 +662,23 @@ begin
             // predecode_invalidate_index_s1 = pcxdecoder_l15_invalall;
 
             case(pcxdecoder_l15_rqtype)
+                `PCX_REQTYPE_CMO:
+                begin
+                    case (pcxdecoder_l15_cmo_op)
+                    `L15_CMO_OP_INVAL:
+                    begin
+                        predecode_reqtype_s1 = `L15_REQTYPE_CMO_INVAL;
+                    end
+                    `L15_CMO_OP_CLEAN:
+                    begin
+                        predecode_reqtype_s1 = `L15_REQTYPE_CMO_CLEAN;
+                    end
+                    `L15_CMO_OP_FLUSH:
+                    begin
+                        predecode_reqtype_s1 = `L15_REQTYPE_CMO_FLUSH;
+                    end
+                    endcase
+                end
                 `PCX_REQTYPE_LOAD:
                 begin
                     if (predecode_is_pcx_config_asi_s1)
@@ -1022,7 +1040,7 @@ begin
     fetch_is_noc2_instruction_invalidation_s1 = (predecode_reqtype_s1 == `L15_REQTYPE_ICACHE_INVALIDATION);
     fetch_is_noc2_ackdt_s1 = (predecode_reqtype_s1 == `L15_REQTYPE_ACKDT_LD || predecode_reqtype_s1 == `L15_REQTYPE_ACKDT_ST_IM || predecode_reqtype_s1 == `L15_REQTYPE_ACKDT_LR);
     fetch_state_next_s1 = `L15_FETCH_STATE_NORMAL;
-    fetch_is_pcx_flush_s1 = predecode_reqtype_s1 == `L15_REQTYPE_LINE_FLUSH;
+    fetch_is_pcx_flush_s1 = predecode_reqtype_s1 == `L15_REQTYPE_LINE_FLUSH || predecode_reqtype_s1 == `L15_REQTYPE_CMO_FLUSH;
 
     case (fetch_state_s1)
         `L15_FETCH_STATE_NORMAL:
@@ -1154,6 +1172,12 @@ begin
     decoder_hmt_op_s1 = 0;
     `endif
     case (predecode_reqtype_s1)
+        `L15_REQTYPE_CMO_INVAL,
+        `L15_REQTYPE_CMO_CLEAN,
+        `L15_REQTYPE_CMO_FLUSH:
+        begin
+            // TODO Set correct params
+        end
         `L15_REQTYPE_LOAD_NC:
         begin
             if (fetch_state_s1 == `L15_FETCH_STATE_NORMAL)
