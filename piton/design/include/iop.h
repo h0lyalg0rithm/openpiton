@@ -76,7 +76,7 @@
 //Cache Crossbar Width and Field Defines
 //======================================
 `define	PCX_WIDTH	124  //PCX payload packet width
-`define	CPX_WIDTH	145  //CPX payload packet width
+`define	CPX_WIDTH	160  //CPX payload packet width
 
 `define PCX_VLD         123  //PCX packet valid 
 `define PCX_RQ_HI       122  //PCX request type field 
