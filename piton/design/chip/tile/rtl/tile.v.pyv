@@ -1047,8 +1047,6 @@ str = '''
         .ExecuteRegionAddrBase  ( %s   ),
         .ExecuteRegionLength    ( %s   ),
         .NrCachedRegionRules    (  1   ),
-        .l15_req_t              ( logic [`L15_REQ_WIDTH-1:0] ),
-        .l15_rtrn_t             ( logic [`L15_RTRN_WIDTH-1:0] ),
         .CachedRegionAddrBase   ( {64'h%s} ),
         .CachedRegionLength     ( {64'h%s} )''' % (dmBase, numRules, execBase, execLength, cacheBase, cacheLength)
 print(str)
