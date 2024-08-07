@@ -71,6 +71,14 @@ extern void setStats(int enable);
     : "r" (i)                                   \
     : "memory");
 
+#define CMO_INVAL(addr)                         \
+  __asm__ __volatile__ (                        \
+    "cbo.inval 0(%0)"                           \
+    :                                           \
+    : "r" (addr)                                \
+    : "memory");
+
+
 #define static_assert(cond) switch(0) { case 0: case !!(long)(cond): ; }
 
 static int verify(int n, const volatile int* test, const int* verify)

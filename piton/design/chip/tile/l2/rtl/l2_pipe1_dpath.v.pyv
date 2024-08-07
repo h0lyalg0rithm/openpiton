@@ -812,7 +812,8 @@ begin
     begin
         l2_evict_S2 = 1'b0;
     end
-    else if (!l2_tag_hit_S2 && (state_way_S2[l2_way_sel_S2][`L2_STATE_VD] == `L2_VD_CLEAN ||
+    else if (!l2_tag_hit_S2 && ((msg_type_S2 == `MSG_TYPE_RVCMO_INVAL_REQ) ||
+	state_way_S2[l2_way_sel_S2][`L2_STATE_VD] == `L2_VD_CLEAN ||
         state_way_S2[l2_way_sel_S2][`L2_STATE_VD] == `L2_VD_DIRTY))
     begin
         l2_evict_S2 = 1'b1;

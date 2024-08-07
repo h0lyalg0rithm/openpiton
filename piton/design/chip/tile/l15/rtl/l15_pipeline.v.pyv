@@ -997,6 +997,7 @@ end
 
 // temp variables
 reg fetch_is_pcx_atomic_instruction_s1;
+reg fetch_is_pcx_cmo_instruction_s1;
 // reg fetch_is_pcx_blockstore_instruction_s1;
 reg fetch_is_pcx_storenc_instruction_s1;
 reg fetch_is_pcx_loadnc_instruction_s1;
@@ -1032,6 +1033,10 @@ begin
          predecode_reqtype_s1 == `L15_REQTYPE_AMO_MAXU ||
          predecode_reqtype_s1 == `L15_REQTYPE_AMO_MIN ||
          predecode_reqtype_s1 == `L15_REQTYPE_AMO_MINU);
+    fetch_is_pcx_cmo_instruction_s1 =
+        (predecode_reqtype_s1 == `L15_REQTYPE_CMO_FLUSH ||
+	 predecode_reqtype_s1 == `L15_REQTYPE_CMO_INVAL ||
+	 predecode_reqtype_s1 == `L15_REQTYPE_CMO_CLEAN);
     // fetch_is_pcx_blockstore_instruction_s1 = 0;
     fetch_is_pcx_storenc_instruction_s1 = (predecode_reqtype_s1 == `L15_REQTYPE_WRITETHROUGH) && !predecode_int_vec_dis_s1;
     fetch_is_pcx_loadnc_instruction_s1 = (predecode_reqtype_s1 == `L15_REQTYPE_LOAD_NC);
@@ -1177,6 +1182,20 @@ begin
         `L15_REQTYPE_CMO_FLUSH:
         begin
             // TODO Set correct params
+	    case (predecode_reqtype_s1)
+		`L15_REQTYPE_CMO_INVAL:
+		begin
+		    decoder_noc1_operation_s1 = `L15_NOC1_GEN_RVCMO_INVAL_REQUEST_FROM_PCX;
+		end
+		`L15_REQTYPE_CMO_CLEAN:
+		begin
+		    decoder_noc1_operation_s1 = `L15_NOC1_GEN_RVCMO_CLEAN_REQUEST_FROM_PCX;
+		end
+		`L15_REQTYPE_CMO_FLUSH:
+		begin
+		    decoder_noc1_operation_s1 = `L15_NOC1_GEN_RVCMO_FLUSH_REQUEST_FROM_PCX;
+		end
+	    endcase
         end
         `L15_REQTYPE_LOAD_NC:
         begin
@@ -4321,6 +4340,30 @@ begin
             noc1_data_source_s3 = `L15_NOC1_SOURCE_PCX_64B;
             noc1_homeid_not_required_s3 = 1'b1;
         end
+	`L15_NOC1_GEN_RVCMO_INVAL_REQUEST_FROM_PCX:
+	begin
+	    noc1_req_val_s3 = val_s3;
+	    noc1_type_s3 = `L15_NOC1_REQTYPE_RVCMO_INVAL_REQUEST;
+	    noc1_data_source_s3 = `L15_NOC1_SOURCE_PCX_64B;
+            l15_noc1buffer_req_address = address_s3;
+            noc1_homeid_source_s3 = `L15_HOMEID_SRC_CSM_MODULE;
+	end
+	`L15_NOC1_GEN_RVCMO_CLEAN_REQUEST_FROM_PCX:
+	begin
+	    noc1_req_val_s3 = val_s3;
+	    noc1_type_s3 = `L15_NOC1_REQTYPE_RVCMO_CLEAN_REQUEST;
+	    noc1_data_source_s3 = `L15_NOC1_SOURCE_PCX_64B;
+            l15_noc1buffer_req_address = address_s3;
+            noc1_homeid_source_s3 = `L15_HOMEID_SRC_CSM_MODULE;
+	end
+	`L15_NOC1_GEN_RVCMO_FLUSH_REQUEST_FROM_PCX:
+	begin
+	    noc1_req_val_s3 = val_s3;
+	    noc1_type_s3 = `L15_NOC1_REQTYPE_RVCMO_FLUSH_REQUEST;
+	    noc1_data_source_s3 = `L15_NOC1_SOURCE_PCX_64B;
+            l15_noc1buffer_req_address = address_s3;
+            noc1_homeid_source_s3 = `L15_HOMEID_SRC_CSM_MODULE;
+	end
     endcase
 
     l15_noc1buffer_req_val = noc1_req_val_s3 && !noc1encoder_req_staled_s3;

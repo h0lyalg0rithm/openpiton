@@ -417,6 +417,24 @@ begin
          msg_cache_type = `MSG_CACHE_TYPE_DATA;
          msg_length = 3; // 2 extra headers + 1 swap data
       end
+      `L15_NOC1_REQTYPE_RVCMO_CLEAN_REQUEST:
+      begin
+         msg_type = `MSG_TYPE_RVCMO_CLEAN_REQ;
+         msg_cache_type = `MSG_CACHE_TYPE_DATA;
+         msg_length = 3; // 2 extra headers + 1 swap data
+      end
+      `L15_NOC1_REQTYPE_RVCMO_INVAL_REQUEST:
+      begin
+         msg_type = `MSG_TYPE_RVCMO_INVAL_REQ;
+         msg_cache_type = `MSG_CACHE_TYPE_DATA;
+         msg_length = 3; // 2 extra headers + 1 swap data
+      end
+      `L15_NOC1_REQTYPE_RVCMO_FLUSH_REQUEST:
+      begin
+         msg_type = `MSG_TYPE_RVCMO_FLUSH_REQ;
+         msg_cache_type = `MSG_CACHE_TYPE_DATA;
+         msg_length = 3; // 2 extra headers + 1 swap data
+      end
    endcase
 end
 
