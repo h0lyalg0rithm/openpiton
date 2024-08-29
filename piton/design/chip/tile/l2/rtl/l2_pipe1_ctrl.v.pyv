@@ -374,6 +374,7 @@ reg msg_data_16B_amo_S1;
 always @ *
 begin
     valid_S1 = mshr_pending_S1 || (msg_header_valid_S1 && msg_input_en_S1_f);
+$display("cmo l2_pipe1_ctrl 376 valid_S1 %d msg_input_en_S1_f %d msg_header_valid_S1 %d\n", valid_S1, msg_input_en_S1_f, msg_header_valid_S1);
 end
 
 
@@ -397,6 +398,7 @@ end
 //msgs from mshr have higher priority than those from the input buffer
 always @ *
 begin
+$display("cmo 402 l2_pipe1_ctrl msg_type_S1 %d\n", msg_type_S1);
     if (msg_from_mshr_S1)
     begin
 `ifdef NO_L2_CAM_MSHR
@@ -432,6 +434,7 @@ reg [`L2_AMO_ALU_OP_WIDTH-1:0] amo_alu_op_S2_f;
 
 always @ *
 begin
+    $display("cmo l2 msg_type_trans_S1 %d\n", msg_type_trans_S1);
     amo_alu_op_S1 = `L2_AMO_ALU_NOP;
     if (!rst_n)
     begin
@@ -512,6 +515,7 @@ end
 //translate atomic instructions into two subtypes based on two phases
 always @ *
 begin
+    $display("cmo l2 msg_type_mux_S1 atomic %d msg_type_trans_S1 %d\n", msg_type_mux_S1, msg_type_trans_S1);
     case (msg_type_mux_S1)
     `MSG_TYPE_NC_LOAD_REQ:
     begin
@@ -527,6 +531,7 @@ begin
         default:
         begin
             msg_type_trans_S1 = msg_type_mux_S1;
+	    $display("cmo setting msg_type_trans_S1 %d", msg_type_mux_S1);
         end
         endcase
     end
@@ -663,6 +668,7 @@ begin
         msg_type_trans_S1 = msg_type_mux_S1;
     end
     endcase
+    $display("cmo l2 after atomic msg_type_trans_S1 %d msg_type_mux_S1 %d\n", msg_type_trans_S1, msg_type_mux_S1);
 end
 
 
@@ -738,6 +744,7 @@ reg [`CS_SIZE_S1-1:0] cs_S1;
 
 always @ *
 begin
+    $display("cmo l2 744 msg_type_trans_S1 %d\n", msg_type_trans_S1);
     cs_S1 = {`CS_SIZE_S1{1'bx}};
     if (valid_S1)
     begin
@@ -793,6 +800,7 @@ begin
                 `MSG_TYPE_AMO_MIN_P1_REQ, `MSG_TYPE_AMO_MIN_P2_REQ,
                 `MSG_TYPE_AMO_MINU_P1_REQ, `MSG_TYPE_AMO_MINU_P2_REQ:
                 begin
+		$display("cmo testing %d\n", msg_type_trans_S1);
                 //  tag_clk_en      tag_rdw_en      state_rd_en
                     cs_S1 = {y,             rd,     y};
                 end
@@ -861,6 +869,8 @@ begin
     begin
         msg_input_en_S1_next = msg_input_en_S1_f;
     end
+    if(msg_type_trans_S1 != 0)
+    $display("cmo msg_type_trans_S1 %d next %d", msg_type_trans_S1, msg_input_en_S1_next);
 end
 
 
@@ -1175,6 +1185,7 @@ reg [`CS_SIZE_P1S2-1:0] cs_S2;
 
 always @ *
 begin
+    $display("cmo 1187 l2_pipe1_ctrl valid_S2 %d\n", valid_S2);
     // default assignment to prevent latch inferral
     cs_S2 = {`CS_SIZE_P1S2{1'bx}};
     if (valid_S2)
@@ -1355,6 +1366,7 @@ begin
                  || msg_type_S2_f == `MSG_TYPE_RVCMO_CLEAN_REQ
                  || msg_type_S2_f == `MSG_TYPE_RVCMO_FLUSH_REQ)
                 begin
+		    $display("cmo inval req\n");
                     cs_S2 = {`L2_AMO_ALU_NOP, n,         rd,      `OP_CLR, n,      rd,            n,       n,         `OP_CLR,    n,          n,
                              `OP_CLR,   n,       n,      `L2_VD_INVAL,  n,      `L2_MESI_I, n,      `L2_LRU_CLR};
                 end
@@ -1385,6 +1397,7 @@ begin
                 end
                 `MSG_TYPE_L2_DIS_FLUSH_REQ, `MSG_TYPE_RVCMO_INVAL_REQ, `MSG_TYPE_RVCMO_FLUSH_REQ:
                 begin
+		    $display("cmo inval req\n");
                     case (l2_way_state_mesi_S2)
                     `L2_MESI_I:
                     begin
@@ -3009,6 +3022,7 @@ reg [`CS_SIZE_S4-1:0] cs_S4;
 
 always @ *
 begin
+    $display("cmo valid_S4 %d\n", valid_S4);
     if (valid_S4)
     begin
         if (special_addr_type_S4_f)
@@ -3030,6 +3044,7 @@ begin
         end
         else
         begin
+	    $display("cmo 3044 l2_pipe1_ctrl msg_type_S4_f %d\n", msg_type_S4_f);
             if (msg_type_S4_f == `MSG_TYPE_INTERRUPT_FWD)
             begin
                 cs_S4 = {n,         y,          `MSG_TYPE_INTERRUPT,    n,          `MSG_TYPE_ERROR};
@@ -3155,6 +3170,7 @@ begin
             end
 
             else begin
+	    $display("cmo 3169 l2_pipe1_ctrl msg_type_S4_f %d\n", msg_type_S4_f);
             case (msg_type_S4_f)
                 //TODO
                 `MSG_TYPE_L2_DIS_FLUSH_REQ, `MSG_TYPE_L2_LINE_FLUSH_REQ:
@@ -3193,6 +3209,7 @@ begin
                 end
                 `MSG_TYPE_RVCMO_INVAL_REQ, `MSG_TYPE_RVCMO_CLEAN_REQ, `MSG_TYPE_RVCMO_FLUSH_REQ:
                 begin
+		   $display("cmo invalid end\n");
                    case (l2_way_state_mesi_S4)
                     `L2_MESI_I:
                     begin
