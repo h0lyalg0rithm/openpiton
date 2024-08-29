@@ -478,6 +478,7 @@ begin
     case (predecode_source_s1)
         `L15_PREDECODE_SOURCE_NOC2:
         begin
+	    $display("cmo predecode_source_s1 %d\n", noc2decoder_l15_reqtype);
             // predecode_address_s1 = predecode_mshr_address_s1;
             predecode_size_s1 = predecode_mshr_read_control_s1[`L15_CONTROL_SIZE_3B -: 3];
             // predecode_threadid_s1 = predecode_mshr_read_control_s1[`L15_CONTROL_THREADID -: `L15_THREADID_WIDTH];
@@ -1186,6 +1187,31 @@ begin
 		`L15_REQTYPE_CMO_INVAL:
 		begin
 		    decoder_noc1_operation_s1 = `L15_NOC1_GEN_RVCMO_INVAL_REQUEST_FROM_PCX;
+		    decoder_noc2_ack_stage_s1 = `L15_ACK_STAGE_NEVER;
+		    decoder_stall_on_matched_bypassed_index_s1 = 1;
+
+		    decoder_dtag_operation_s1 = `L15_DTAG_OP_READ;
+
+		    decoder_mesi_read_op_s1 = `L15_S2_MESI_READ;
+		    decoder_dcache_operation_s1 = `L15_DCACHE_READ_TAGCHECK_WAY_IF_M;
+
+		    decoder_s3_mshr_operation_s1 = `L15_S3_MSHR_OP_UPDATE_ST_MSHR_IM_IF_INDEX_TAGCHECK_WAY_MATCHES;
+		    decoder_mesi_write_op_s1 = `L15_S3_MESI_INVALIDATE_TAGCHECK_WAY_IF_MES;
+		    decoder_lrsc_flag_write_op_s1 = `L15_S2_LRSC_FLAG_CLEAR_TAGCHECK_WAY;
+		    // decoder_wmt_operation_s1 = `L15_WMT_READ_TAGCHECK_WAY_IF_MES_AND_DEMAP_ENTRY;
+		    decoder_wmt_read_op_s1 = `L15_WMT_READ;
+		    decoder_wmt_write_op_s1 = `L15_WMT_DEMAP_TAGCHECK_WAY_IF_MES;
+		    decoder_wmt_compare_op_s1 = `L15_WMT_COMPARE_TAGCHECK;
+
+		    decoder_lruarray_write_op_s1 = `L15_LRU_INVALIDATE_IF_TAGCHECK_WAY_IS_MES;
+
+		    decoder_cpx_operation_s1 = `L15_CPX_GEN_INVALIDATION_IF_TAGCHECK_MES_AND_WAYMAP_VALID;
+		    decoder_noc3_operation_s1 = `L15_NOC3_GEN_INVAL_ACK_IF_TAGCHECK_M_FROM_DCACHE;
+
+		    decoder_csm_op_s1 = `L15_CSM_OP_EVICT_IF_M;
+
+		    //decoder_creditman_noc1_needed = 2'd2;
+		    $display("cmo l1.5 predecode_reqtype_s1");
 		end
 		`L15_REQTYPE_CMO_CLEAN:
 		begin
@@ -1819,6 +1845,15 @@ begin
             decoder_stall_on_matched_bypassed_index_s1 = 1;
             decoder_s3_mshr_operation_s1 = `L15_S3_MSHR_OP_DEALLOCATION;
             decoder_cpx_operation_s1 = `L15_CPX_GEN_ATOMIC_ACK_FROM_NOC2;
+        end
+
+        `L15_REQTYPE_ACK_CMO:
+        begin
+            decoder_noc2_ack_stage_s1 = `L15_ACK_STAGE_S3;
+            decoder_stall_on_matched_bypassed_index_s1 = 1;
+            decoder_s3_mshr_operation_s1 = `L15_S3_MSHR_OP_DEALLOCATION;
+            decoder_cpx_operation_s1 = `L15_CPX_GEN_CMO_ACK_FROM_NOC2;
+	    $display("cmo ack cmo %d\n", predecode_reqtype_s1);
         end
 
         `L15_REQTYPE_ACKDT_LR:
@@ -3307,6 +3342,7 @@ begin
             name = e[0] + '_s3'
             print("%s <= %s_next;" % (name,name))
         %>
+	$display("cmo l1.5 stage 3 %d\n", noc1_operation_s3);
     end
 end
 
@@ -4176,6 +4212,7 @@ begin
     creditman_noc1_reserve_s3 = 0;
     l15_noc1buffer_req_address = 0;
     noc1_homeid_source_s3 = 0;
+    $display("cmo noc1_operation_s3 %d\n", noc1_operation_s3);
     case (noc1_operation_s3)
         `L15_NOC1_GEN_WRITEBACK_GUARD_IF_LRU_M:
         begin
@@ -4347,6 +4384,7 @@ begin
 	    noc1_data_source_s3 = `L15_NOC1_SOURCE_PCX_64B;
             l15_noc1buffer_req_address = address_s3;
             noc1_homeid_source_s3 = `L15_HOMEID_SRC_CSM_MODULE;
+	    $display("cmo noc1_type_s3 %d\n", noc1_type_s3);
 	end
 	`L15_NOC1_GEN_RVCMO_CLEAN_REQUEST_FROM_PCX:
 	begin

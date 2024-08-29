@@ -53,6 +53,7 @@ module pcx_decoder(
    output reg        pcxdecoder_pcxbuf_ack,
    output reg [4:0]  pcxdecoder_l15_rqtype,
    output reg [`L15_AMO_OP_WIDTH-1:0]  pcxdecoder_l15_amo_op,
+   output reg [`L15_CMO_OP_WIDTH-1:0]  pcxdecoder_l15_cmo_op,
    output reg        pcxdecoder_l15_nc,
    output reg [2:0]  pcxdecoder_l15_size,
    output reg [`L15_THREADID_MASK]  pcxdecoder_l15_threadid,
@@ -93,6 +94,7 @@ begin
 
    pcxdecoder_l15_rqtype = message[`PCX_RQ_HI:`PCX_RQ_LO];
    pcxdecoder_l15_amo_op = `L15_AMO_OP_NONE;
+   pcxdecoder_l15_cmo_op = `L15_CMO_OP_NONE;
    pcxdecoder_l15_nc = message[`PCX_NC];
    pcxdecoder_l15_threadid = message[`PCX_TH_HI:`PCX_TH_LO];
    pcxdecoder_l15_prefetch = message[110];
@@ -111,6 +113,7 @@ begin
    is_message_new_next = l15_pcxdecoder_ack ? 1'b1 :
                          l15_pcxdecoder_header_ack ? 1'b0 : is_message_new;
 
+   $display("cmo message %d\n", message[`PCX_RQ_HI:`PCX_RQ_LO]);
    if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CAS1)
    begin
       pcxdecoder_l15_rqtype = `PCX_REQTYPE_AMO;
@@ -126,6 +129,27 @@ begin
       pcxdecoder_l15_rqtype = `PCX_REQTYPE_AMO;
       pcxdecoder_l15_amo_op = `L15_AMO_OP_SWAP;
    end
+   else if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO)
+   begin
+      pcxdecoder_l15_rqtype = `PCX_REQTYPE_CMO;
+      pcxdecoder_l15_cmo_op = `L15_CMO_OP_INVAL;
+      $display("cmo pcx_reqtype\n");
+   end
+   //else if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO_CLEAN)
+   //begin
+   //   pcxdecoder_l15_rqtype = `PCX_REQTYPE_CMO;
+   //   pcxdecoder_l15_cmo_op = `L15_CMO_OP_CLEAN;
+   //end
+   //else if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO_FLUSH)
+   //begin
+   //   pcxdecoder_l15_rqtype = `PCX_REQTYPE_CMO;
+   //   pcxdecoder_l15_cmo_op = `L15_CMO_OP_FLUSH;
+   //end
+end
+always @(*) begin
+  if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO) begin
+  $display("cmo l15 what what"); 
+  end
 end
 
 always @(*) begin
