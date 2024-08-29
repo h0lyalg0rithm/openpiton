@@ -14,23 +14,25 @@
 // Also runs correctly on manycore configs.
 //
 
-#include <stdint.h>
+//#include <stdint.h>
 #include <stdio.h>
 #include "util.h"
 
 int main(int argc, char** argv) {
 
   // synchronization variable
-  volatile static uint32_t amo_cnt = 0;
-  volatile static uint32_t data = 100;
+  static uint32_t amo_cnt = 0;
+  static uint32_t data = 100;
+  printf("The address is %p %d\n", &data, &data);
 
   // synchronize with other cores and wait until it is this core's turn
   while(argv[0][0] != amo_cnt);
 
+  __builtin_riscv_zicbom_cbo_inval(&data);
+  printf("The value is %d\n", data);
   // assemble number and print
   printf("Hello world, this is hart %d of %d harts!\n", argv[0][0], argv[0][1]);
 
-  __builtin_riscv_zicbom_cbo_inval(&data);
   //CMO_INVAL(&data);
   // increment atomic counter
   ATOMIC_OP(amo_cnt, 1, add, w);
