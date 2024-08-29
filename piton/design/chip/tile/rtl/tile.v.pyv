@@ -778,6 +778,7 @@ if (TILE_TYPE == `SPARC_TILE) begin : g_sparc_core
 
         .transducer_l15_rqtype              (transducer_l15_rqtype),
         .transducer_l15_amo_op              (transducer_l15_amo_op),
+        .transducer_l15_cmo_op              (transducer_l15_cmo_op),
         .transducer_l15_size                (transducer_l15_size),
         .transducer_l15_val                 (transducer_l15_val),
         .transducer_l15_address             (transducer_l15_address),
