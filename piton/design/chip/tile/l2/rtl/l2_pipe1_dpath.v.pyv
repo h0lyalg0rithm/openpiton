@@ -442,7 +442,6 @@ end
 
 always @ *
 begin
-    $display("cmo l2_pipe1_dpath %d\n", msg_data_S1);
     reg_data_in_S1 = msg_data_S1;
 end
 
@@ -827,7 +826,6 @@ end
 
 always @ *
 begin
-    $display("cmo l2_pipe1_dpath msg_type_S2 %d\n", msg_type_S2);
     if (special_addr_type_S2
      || msg_type_S2 == `MSG_TYPE_WBGUARD_REQ)
     begin
@@ -1974,7 +1972,6 @@ flat_id_to_xy sharer_xy_gen(
 
 always @ *
 begin
-    $display("cmo l2 msg_send_type_S4 %d\n", msg_send_type_S4);
     case (msg_send_type_S4)
     `MSG_TYPE_LOAD_FWD, `MSG_TYPE_STORE_FWD:
     begin

@@ -289,7 +289,6 @@ begin
    msg_dest_l2_ypos_new = 0;
 
 
-   $display("cmo noc1encoder req_type %d\n", req_type);
    case (req_type)
       `L15_NOC1_REQTYPE_WRITEBACK_GUARD:
       begin
@@ -426,7 +425,6 @@ begin
       end
       `L15_NOC1_REQTYPE_RVCMO_INVAL_REQUEST:
       begin
-	 $display("cmo noc1encoder inval \n");
          msg_type = `MSG_TYPE_RVCMO_INVAL_REQ;
          msg_cache_type = `MSG_CACHE_TYPE_DATA;
          msg_length = 3; // 2 extra headers + 1 swap data
@@ -438,7 +436,6 @@ begin
          msg_length = 3; // 2 extra headers + 1 swap data
       end
    endcase
-   $display("cmo noc1encoder msg_type %d\n", msg_type);
 end
 
 flat_id_to_xy cpuid_to_xy (

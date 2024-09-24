@@ -183,8 +183,6 @@ begin
    data_wrindex_plus_1 = data_wrindex + 1;
    data_wrindex_plus_2 = data_wrindex + 2;
 
-   $display("cmo l15_noc1buffer_req_type %d\n", l15_noc1buffer_req_type);
-
    if (l15_noc1buffer_req_val)
    begin
       command_buffer_next[command_wrindex][`L15_NOC1BUFFER_REQTYPE] = l15_noc1buffer_req_type;

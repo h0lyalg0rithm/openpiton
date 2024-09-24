@@ -67,7 +67,6 @@ module l2_decoder(
 
 always @ *
 begin
-    $display("cmo l2_decoder %d\n", msg_header[`MSG_TYPE]);
     msg_type = msg_header[`MSG_TYPE];
     msg_length = msg_header[`MSG_LENGTH];
     msg_mshrid = msg_header[`MSG_MSHRID];

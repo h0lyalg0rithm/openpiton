@@ -113,7 +113,6 @@ begin
    is_message_new_next = l15_pcxdecoder_ack ? 1'b1 :
                          l15_pcxdecoder_header_ack ? 1'b0 : is_message_new;
 
-   $display("cmo message %d\n", message[`PCX_RQ_HI:`PCX_RQ_LO]);
    if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CAS1)
    begin
       pcxdecoder_l15_rqtype = `PCX_REQTYPE_AMO;
@@ -133,7 +132,6 @@ begin
    begin
       pcxdecoder_l15_rqtype = `PCX_REQTYPE_CMO;
       pcxdecoder_l15_cmo_op = `L15_CMO_OP_INVAL;
-      $display("cmo pcx_reqtype\n");
    end
    //else if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO_CLEAN)
    //begin
@@ -148,7 +146,6 @@ begin
 end
 always @(*) begin
   if (message[`PCX_RQ_HI:`PCX_RQ_LO] == `PCX_REQTYPE_CMO) begin
-  $display("cmo l15 what what"); 
   end
 end
 

@@ -406,7 +406,6 @@ begin
         && `L15_PIPE0.fetch_state_s1 == `L15_FETCH_STATE_NORMAL)
     begin
 	if (`L15_PIPE0.pcxdecoder_l15_cmo_op) begin
-        $write("cmo %d\n", `L15_PIPE0.pcxdecoder_l15_cmo_op);
 	end
         $write("%0d TILE0 L1.5 th%d: Received PCX ", $time, `L15_PIPE0.pcxdecoder_l15_threadid); decode_pcx_op(`L15_PIPE0.pcxdecoder_l15_rqtype, `L15_PIPE0.pcxdecoder_l15_amo_op, `L15_PIPE0.pcxdecoder_l15_cmo_op);
         $display("   Addr 0x%x, nc %d, size %d, invalall %d, pf %d, bs %d, bsi %d, l1way %d",
